@@ -16,7 +16,7 @@ This report provides an analysis of the dataset "lead-iq-01.csv," which contains
 - **Smelter**: Categorical variable indicating whether the subject lived "Near" or "Far" from the lead smelter.
 - **IQ**: Numerical variable representing the IQ score as measured by the Wechsler Intelligence Scale for Children (WISC).
 
-We will explore the data using visualizations and descriptive statistics.
+We will explore the data using visualizations and descriptive statistics. Note that after discussing with the primary investigator, an outlier with an IQ value of "999" was corrected to "99".
 
 ## Load Data
 
@@ -28,11 +28,14 @@ library(knitr)
 
 # Load the data
 lead_data <- read.csv("../data-raw/lead-iq-01.csv")
+
+# Correct the outlier
+lead_data$IQ[lead_data$IQ == 999] <- 99
 ```
 
 ## Graph: IQ Levels by Location Status
 
-The graph below shows the distribution of IQ levels between the two locations, "Near" and "Far". Note that an outlier with an IQ value of "999" has been excluded from this figure:
+The graph below shows the distribution of IQ levels between the two locations, "Near" and "Far".
 
 ```{r plot-iq}
 ggplot(lead_data[lead_data$IQ < 999, ], aes(x = Smelter, y = IQ, fill = Smelter)) +
@@ -60,4 +63,4 @@ summary_table <- lead_data %>%
 kable(summary_table, caption = "Summary Statistics for IQ Levels by Location Status")
 ```
 
-The table above provides a summary of IQ levels by location status, including the mean and standard deviation for each group. The sample sizes for both categories are similar. The average IQ for the "Near" group is `r summary_table$Mean_IQ[summary_table$Smelter == "Near"]`, while the average IQ for the "Far" group is `r summary_table$Mean_IQ[summary_table$Smelter == "Far"]`. The mean IQ of children living far from the smelter appears noticeably higher compared to those living near the smelter. However, it is important to note that there is an outlier in the "Far" group, which makes it challenging to directly compare the standard deviations between the two groups.
+The table above provides a summary of IQ levels by location status, including the mean and standard deviation for each group. The sample sizes for both categories are similar. The average IQ for the "Near" group is `r summary_table$Mean_IQ[summary_table$Smelter == "Near"]`, while the average IQ for the "Far" group is `r summary_table$Mean_IQ[summary_table$Smelter == "Far"]`. After correcting the outlier in the "Far" group, the difference in average IQ between the two groups is less pronounced. This is reflected in both the boxplot and the summary table. To further compare the groups, a Wilcoxon test could be performed to assess whether the difference in IQ levels is statistically significant.
